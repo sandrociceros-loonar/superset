@@ -194,7 +194,16 @@ RUN /app/docker/apt-install.sh \
       libsasl2-modules-gssapi-mit \
       libpq-dev \
       libecpg-dev \
-      libldap2-dev
+      libldap2-dev \
+      unixodbc-dev gcc g++ gnupg2
+
+# Instala o driver ODBC da Microsoft para SQL Server
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
+    curl https://packages.microsoft.com/config/debian/12/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
+    apt-get update && ACCEPT_EULA=Y apt-get install -y msodbcsql18 && rm -rf /var/lib/apt/lists/*
+
+# Instala o pyodbc no ambiente virtual
+RUN . /app/.venv/bin/activate && pip install --upgrade pip && pip install pyodbc && python -c "import pyodbc; print(pyodbc.version)"
 
 # Copy compiled things from previous stages
 COPY --from=superset-node /app/superset/static/assets superset/static/assets
