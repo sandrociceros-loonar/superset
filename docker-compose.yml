@@ -82,8 +82,7 @@ services:
     env_file:
       - docker/.env
       - docker/.env-local
-    build:
-      <<: *common-build
+    image: superset:latest
     container_name: superset_app
     command: ["/app/docker/docker-bootstrap.sh", "app"]
     restart: unless-stopped
@@ -136,8 +135,7 @@ services:
       - REDIS_SSL=false
 
   superset-init:
-    build:
-      <<: *common-build
+    image: superset:latest
     container_name: superset_init
     command: ["/app/docker/docker-init.sh"]
     env_file:
@@ -188,8 +186,7 @@ services:
     env_file:
       - docker/.env
       - docker/.env-local
-    build:
-      <<: *common-build
+    image: superset:latest
     container_name: superset_worker
     command: ["/app/docker/docker-bootstrap.sh", "worker"]
     environment:
@@ -214,8 +211,7 @@ services:
     env_file:
       - docker/.env
       - docker/.env-local
-    build:
-      <<: *common-build
+    image: superset:latest
     container_name: superset_worker_beat
     command: ["/app/docker/docker-bootstrap.sh", "beat"]
     restart: unless-stopped
@@ -233,8 +229,7 @@ services:
     env_file:
       - docker/.env
       - docker/.env-local
-    build:
-      <<: *common-build
+    image: superset:latest
     container_name: superset_tests_worker
     command: ["/app/docker/docker-bootstrap.sh", "worker"]
     profiles:
