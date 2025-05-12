@@ -114,13 +114,16 @@ RUN useradd --user-group -d ${SUPERSET_HOME} -m --no-log-init --shell /bin/bash 
 # Some bash scripts needed throughout the layers
 COPY --chmod=755 docker/*.sh /app/docker/
 
+RUN apt-get update && apt-get install -y python3-venv python3-pip unixodbc unixodbc-dev libodbc1 && rm -rf /var/lib/apt/lists/*
 RUN pip install --no-cache-dir --upgrade uv
-# Ensure uv is available in PATH
-ENV PATH="$PATH:/root/.local/bin"
-RUN uv venv /app/.venv
+
 # Install pip in the virtual environment, as uv venv does not include it by default
-RUN /app/.venv/bin/python -m ensurepip --upgrade
-ENV PATH="/app/.venv/bin:${PATH}"
+ENV PIP_ROOT_USER_ACTION=ignore
+RUN python3 -m venv /app/.venv
+RUN . /app/.venv/bin/activate && python -m ensurepip --upgrade
+RUN . /app/.venv/bin/activate && pip install --upgrade pip
+RUN . /app/.venv/bin/activate && pip install pyodbc
+RUN . /app/.venv/bin/activate && python -c "import pyodbc; print(pyodbc.version)"
 
 ######################################################################
 # Python translation compiler layer
@@ -174,6 +177,7 @@ ARG INCLUDE_FIREFOX="false"
 RUN --mount=type=cache,target=${SUPERSET_HOME}/.cache/uv \
     if [ "$INCLUDE_CHROMIUM" = "true" ] || [ "$INCLUDE_FIREFOX" = "true" ]; then \
         uv pip install playwright && \
+        . /app/.venv/bin/activate && \
         playwright install-deps && \
         if [ "$INCLUDE_CHROMIUM" = "true" ]; then playwright install chromium; fi && \
         if [ "$INCLUDE_FIREFOX" = "true" ]; then playwright install firefox; fi; \
@@ -201,15 +205,6 @@ RUN /app/docker/apt-install.sh \
       unixodbc-dev \
       libodbc1 \
       gcc g++ gnupg2
-
-ENV VIRTUAL_ENV=/app/.venv
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
-ENV PIP_ROOT_USER_ACTION=ignore
-
-# Install pyodbc in the virtual environment and validate import
-RUN /app/.venv/bin/pip install --upgrade pip 
-RUN /app/.venv/bin/pip install pyodbc 
-RUN /app/.venv/bin/python -c "import pyodbc; print(pyodbc.version)"
 
 # Copy compiled things from previous stages
 COPY --from=superset-node /app/superset/static/assets superset/static/assets
