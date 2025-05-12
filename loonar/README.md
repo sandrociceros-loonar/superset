@@ -23,15 +23,7 @@
     cd superset
      ```
 
-2. Install docker
-
-   ```bash
-   cd loonar
-   bash install-docker-rootless.sh
-   cd "$(git rev-parse --show-toplevel)"
-   ```
-
-3. Create the solution configuration file
+2. Create the solution configuration file
 
     ```bash
     cd docker
@@ -39,15 +31,22 @@
     nano .env-local
     ```
 
-4. Change the configuration variables values to meet the implementation needs
+3. Change the configuration variables values to meet the implementation needs
 
     ```bash
     cd docker
     nano 
     ```
 
-5. In the root directory build the solution
+4. In the root directory build the solution
 
     ```bash
     docker-compose build --no-cache
-    ```
+
+## Maintenance
+
+- Run with reasonable period the command below to delete containers, volumes, networks and unused images:
+
+```bash
+docker system prune -a --volumes -f
+```
