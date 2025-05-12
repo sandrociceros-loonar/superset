@@ -18,6 +18,11 @@
 
 set -eo pipefail
 
+# Ativar o virtualenv se existir
+if [ -f /app/.venv/bin/activate ]; then
+  . /app/.venv/bin/activate
+fi
+
 # Make python interactive
 if [ "$DEV_MODE" == "true" ]; then
     if [ "$(whoami)" = "root" ] && command -v uv > /dev/null 2>&1; then
