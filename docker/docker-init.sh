@@ -17,6 +17,11 @@
 #
 set -e
 
+# Ativar o virtualenv se existir
+if [ -f /app/.venv/bin/activate ]; then
+  . /app/.venv/bin/activate
+fi
+
 #
 # Always install local overrides first
 #
