@@ -101,7 +101,7 @@ services:
     environment:
       CYPRESS_CONFIG: "${CYPRESS_CONFIG:-}"
       SUPERSET_LOG_LEVEL: "${SUPERSET_LOG_LEVEL:-info}"
-      SECRET_KEY: "$(openssl rand -base64 42 | tr -d '\n')"
+      # SECRET_KEY será lida do .env-local automaticamente
 
   superset-websocket:
     container_name: superset_websocket
