@@ -31,11 +31,10 @@
     nano .env-local
     ```
 
-3. Change the configuration variables values to meet the implementation needs
+3. Change the configuration variables values to meet the implementation needs. Updated the SUPERSET_SECRET_KEY with the out value generated:
 
     ```bash
-    cd docker
-    nano 
+    openssl rand -base64 42 | tr -d '\n'
     ```
 
 4. In the root directory build the solution
