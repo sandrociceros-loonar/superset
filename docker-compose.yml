@@ -79,9 +79,10 @@ services:
       - ./docker/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
 
   superset:
-    env_file:
-      - docker/.env
-      - docker/.env-local
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev  # ou "lean", se preferir outro estágio
     image: superset:latest
     container_name: superset_app
     command: ["/app/docker/docker-bootstrap.sh", "app"]
@@ -135,6 +136,10 @@ services:
       - REDIS_SSL=false
 
   superset-init:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev  # ou "lean", se preferir outro estágio
     image: superset:latest
     container_name: superset_init
     command: ["/app/docker/docker-init.sh"]
@@ -183,12 +188,16 @@ services:
     volumes: *superset-volumes
 
   superset-worker:
-    env_file:
-      - docker/.env
-      - docker/.env-local
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev  # ou "lean", se preferir outro estágio
     image: superset:latest
     container_name: superset_worker
     command: ["/app/docker/docker-bootstrap.sh", "worker"]
+    env_file:
+      - docker/.env
+      - docker/.env-local
     environment:
       CELERYD_CONCURRENCY: 2
       CYPRESS_CONFIG: "${CYPRESS_CONFIG:-}"
@@ -208,12 +217,16 @@ services:
     # mem_reservation: 128M
 
   superset-worker-beat:
-    env_file:
-      - docker/.env
-      - docker/.env-local
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev  # ou "lean", se preferir outro estágio
     image: superset:latest
     container_name: superset_worker_beat
     command: ["/app/docker/docker-bootstrap.sh", "beat"]
+    env_file:
+      - docker/.env
+      - docker/.env-local
     restart: unless-stopped
     depends_on:
       - superset-worker
