@@ -127,3 +127,7 @@ docker/*local*
 test-report.html
 superset/static/stats/statistics.html
 .aider*
+
+
+docker/nginx/certs/*.key
+docker/nginx/certs/*.crt
