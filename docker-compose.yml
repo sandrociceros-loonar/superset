@@ -49,7 +49,7 @@ services:
     container_name: superset_nginx
     restart: unless-stopped
     ports:
-      - "8000:80"
+      - "80:80"
       - "443:443"
     extra_hosts:
       - "host.docker.internal:host-gateway"
