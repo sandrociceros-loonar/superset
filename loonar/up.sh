@@ -38,8 +38,15 @@ fi
 
 export COMPOSE_BAKE=true
 
-# Remove imagens antigas para evitar erro de "already exists"
-docker images --format '{{.Repository}}:{{.Tag}}' | grep '^superset' | xargs -r docker rmi -f
+# Pergunta ao usuário se deseja remover imagens antigas e recompilar
+read -rp "Deseja remover imagens antigas e recompilar as imagens Docker? (s/n): " CONFIRMAR
+if [[ "$CONFIRMAR" =~ ^[Ss]$ ]]; then
+    # Remove imagens antigas para evitar erro de "already exists"
+    docker images --format '{{.Repository}}:{{.Tag}}' | grep '^superset' | xargs -r docker rmi -f
+    docker compose build --no-cache
 
-docker compose build --no-cache
+    echo "Compilação concluída. Verifique se há erros durante a operação"
+else
+    echo "Operação de remoção e recompilação de imagens Docker ignorada."
+fi
 
