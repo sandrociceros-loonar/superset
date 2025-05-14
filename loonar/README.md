@@ -40,6 +40,8 @@
 4. In the root directory build the solution
 
     ```bash
+    docker buildx bake --file docker-bake.hcl && docker-compose up
+    # or
     docker-compose build --no-cache
 
 ## Maintenance
