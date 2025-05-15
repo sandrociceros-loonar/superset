@@ -10,6 +10,7 @@ read -rp "Informe a URL do host para acesso ao Superset (ex: superset.seudominio
 
 # Gera a chave secreta
 SUPERSET_SECRET_KEY=$(openssl rand -base64 42 | tr -d '\n')
+export SUPERSET_SECRET_KEY
 
 # Atualiza a chave nos arquivos .env
 for file in docker/.env docker/.env-local; do
