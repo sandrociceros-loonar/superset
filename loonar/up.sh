@@ -61,4 +61,3 @@ if [[ "$INICIAR" =~ ^[Ss]$ ]]; then
 else
     echo "Operação de inicialização de containers ignorada."
 fi
-
