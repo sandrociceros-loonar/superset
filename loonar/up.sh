@@ -33,7 +33,7 @@ done
 #Atualize o arquivo docker/nginx/nginx.conf alterando o valor de server_name para o valor de $SUPERSET_HOST_URL
 NGINX_CONF_FILE="docker/nginx/nginx.conf"
 if [ -f "$NGINX_CONF_FILE" ]; then
-    sed -i "s|^    server_name .*;|    server_name $SUPERSET_HOST_URL;|" "$NGINX_CONF_FILE"
+    sed -i "s|^SUPERSET_SECRET_KEY=[^#]*\(.*\)|SUPERSET_SECRET_KEY=$SUPERSET_SECRET_KEY\t\1|" "$file"
     echo "Atualizado server_name em $NGINX_CONF_FILE"
 else
     echo "Arquivo $NGINX_CONF_FILE não encontrado."
@@ -51,5 +51,14 @@ if [[ "$CONFIRMAR" =~ ^[Ss]$ ]]; then
     echo "Compilação concluída. Verifique se há erros durante a operação"
 else
     echo "Operação de remoção e recompilação de imagens Docker ignorada."
+fi
+
+# Pergunta ao usuário se deseja iniciar os containers
+read -rp "Deseja iniciar os containers? (s/n): " INICIAR
+if [[ "$INICIAR" =~ ^[Ss]$ ]]; then
+    docker compose up -d
+    echo "Containers iniciados."
+else
+    echo "Operação de inicialização de containers ignorada."
 fi
 
