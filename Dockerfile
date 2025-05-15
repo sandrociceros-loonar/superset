@@ -114,7 +114,18 @@ RUN useradd --user-group -d ${SUPERSET_HOME} -m --no-log-init --shell /bin/bash 
 # Some bash scripts needed throughout the layers
 COPY --chmod=755 docker/*.sh /app/docker/
 
-RUN apt-get update && apt-get install -y python3-venv python3-pip unixodbc unixodbc-dev libodbc1 && rm -rf /var/lib/apt/lists/*
+# Instala dependências do sistema e o driver ODBC 17 da Microsoft
+RUN apt-get update && \
+    apt-get install -y curl gnupg2 apt-transport-https ca-certificates && \
+    curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
+    curl https://packages.microsoft.com/config/debian/11/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
+    apt-get update && \
+    apt-get remove -y libodbc2 libodbccr2 libodbcinst2 unixodbc-common || true && \
+    rm -f /usr/lib/x86_64-linux-gnu/libodbc.so.2.0.0 /usr/lib/x86_64-linux-gnu/libodbcinst.so.2.0.0 /etc/odbc.ini || true && \
+    ACCEPT_EULA=Y apt-get install -y msodbcsql17 unixodbc unixodbc-dev libodbc1 odbcinst odbcinst1debian2 && \
+    apt-get install -y python3-venv python3-pip && \
+    rm -rf /var/lib/apt/lists/*
+
 RUN pip install --no-cache-dir --upgrade uv
 
 # Install pip in the virtual environment, as uv venv does not include it by default

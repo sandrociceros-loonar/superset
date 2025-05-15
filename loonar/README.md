@@ -23,26 +23,28 @@
     cd superset
      ```
 
-2. Create the solution configuration file
+2. Change the configuration variables values to meet the implementation needs.
 
     ```bash
     cd docker
-    cp .env-local.sample .env-local
     nano .env-local
     ```
 
-3. Change the configuration variables values to meet the implementation needs. Updated the SUPERSET_SECRET_KEY with the out value generated:
+3. Copy certificate files superset.crt and superset.key
 
     ```bash
-    openssl rand -base64 42 | tr -d '\n'
+    cd "$(git rev-parse --show-toplevel)" # Go to root directory of git repository
+    cd docker/nignx/certs
+    # copy files to this directory
     ```
 
-4. In the root directory build the solution
+4. Go to the Loonar directory to configure NGINX, build the images and deploy the solution. Beware when responding to script prompts:
 
     ```bash
-    docker buildx bake --file docker-bake.hcl && docker-compose up
-    # or
-    docker-compose build --no-cache
+    cd "$(git rev-parse --show-toplevel)" # Go to root directory of git repository
+    cd loonar
+    ./up.sh    
+    ```
 
 ## Maintenance
 
