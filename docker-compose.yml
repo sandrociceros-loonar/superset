@@ -100,11 +100,11 @@ services:
       superset-init:
         condition: service_completed_successfully
     volumes: *superset-volumes
-    environment:
-      CYPRESS_CONFIG: "${CYPRESS_CONFIG:-}"
-      SUPERSET_LOG_LEVEL: "${SUPERSET_LOG_LEVEL:-info}"
-      SUPERSET_SECRET_KEY: "${SUPERSET_SECRET_KEY}"
-      SECRET_KEY: "${SUPERSET_SECRET_KEY}"
+    env_file:
+      - path: docker/.env # default
+        required: true
+      - path: docker/.env-local # optional override
+        required: false
 
   superset-websocket:
     container_name: superset_websocket
@@ -133,11 +133,14 @@ services:
       # Mounting a config file that contains a dummy secret required to boot up.
       # do not use this docker compose in production
       - ./docker/superset-websocket/config.json:/home/superset-websocket/config.json
-    environment:
-      - PORT=8080
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - REDIS_SSL=false
+    env_file:
+      - path: docker/.env # default
+        required: true
+      - path: docker/.env-local # optional override
+        required: false
+
+
+
 
   superset-init:
     build:
@@ -148,8 +151,10 @@ services:
     container_name: superset_init
     command: ["/app/docker/docker-init.sh"]
     env_file:
-      - docker/.env
-      - docker/.env-local
+      - path: docker/.env # default
+        required: true
+      - path: docker/.env-local # optional override
+        required: false
     depends_on:
       db:
         condition: service_started
@@ -187,8 +192,10 @@ services:
     container_name: superset_node
     command: ["/app/docker/docker-frontend.sh"]
     env_file:
-      - docker/.env
-      - docker/.env-local
+      - path: docker/.env # default
+        required: true
+      - path: docker/.env-local # optional override
+        required: false
     volumes: *superset-volumes
 
   superset-worker:
@@ -200,8 +207,10 @@ services:
     container_name: superset_worker
     command: ["/app/docker/docker-bootstrap.sh", "worker"]
     env_file:
-      - docker/.env
-      - docker/.env-local
+      - path: docker/.env # default
+        required: true
+      - path: docker/.env-local # optional override
+        required: false
     environment:
       CELERYD_CONCURRENCY: 2
       CYPRESS_CONFIG: "${CYPRESS_CONFIG:-}"
@@ -229,8 +238,10 @@ services:
     container_name: superset_worker_beat
     command: ["/app/docker/docker-bootstrap.sh", "beat"]
     env_file:
-      - docker/.env
-      - docker/.env-local
+      - path: docker/.env # default
+        required: true
+      - path: docker/.env-local # optional override
+        required: false
     restart: unless-stopped
     depends_on:
       - superset-worker
@@ -244,8 +255,10 @@ services:
 
   superset-tests-worker:
     env_file:
-      - docker/.env
-      - docker/.env-local
+      - path: docker/.env # default
+        required: true
+      - path: docker/.env-local # optional override
+        required: false
     image: superset:latest
     container_name: superset_tests_worker
     command: ["/app/docker/docker-bootstrap.sh", "worker"]
