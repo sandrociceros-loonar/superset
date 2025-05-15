@@ -6,7 +6,7 @@ set -e
 cd ..
 
 # Solicita ao usuário a URL do host para o Superset
-read -p "Informe a URL do host para acesso ao Superset (ex: superset.seudominio.com): " SUPERSET_HOST_URL
+read -rp "Informe a URL do host para acesso ao Superset (ex: superset.seudominio.com): " SUPERSET_HOST_URL
 
 # Gera a chave secreta
 SUPERSET_SECRET_KEY=$(openssl rand -base64 42 | tr -d '\n')
@@ -17,9 +17,11 @@ for file in docker/.env docker/.env-local; do
         # Verifica o valor atual da chave
         CURRENT_KEY=$(grep '^SUPERSET_SECRET_KEY=' "$file" | cut -d'=' -f2-)
         if [ "$CURRENT_KEY" = "SUPERSET_SECRET_KEY" ]; then
+            echo "Valor atual de SUPERSET_SECRET_KEY=$SUPERSET_SECRET_KEY em $file"
             sed -i "s|^SUPERSET_SECRET_KEY=.*|SUPERSET_SECRET_KEY=$SUPERSET_SECRET_KEY|" "$file"
             echo "Atualizado SUPERSET_SECRET_KEY em $file"
         else
+            echo "Valor atual de SUPERSET_SECRET_KEY=$SUPERSET_SECRET_KEY em $file"
             echo "SUPERSET_SECRET_KEY já possui um valor customizado em $file: $CURRENT_KEY. Valor mantido."
         fi
     else
