@@ -16,23 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import { t } from '../translation';
 
-export default function validateServerPagination(
-  v: unknown,
-  serverPagination: boolean,
-  maxValueWithoutServerPagination: number,
-  maxServer: number,
-) {
-  if (
-    Number(v) > +maxValueWithoutServerPagination &&
-    Number(v) <= maxServer &&
-    !serverPagination
-  ) {
-    return t(
-      'Server pagination needs to be enabled for values over %s',
-      maxValueWithoutServerPagination,
-    );
+export const isEmbedded = () => {
+  try {
+    return window.self !== window.top || window.frameElement !== null;
+  } catch (e) {
+    return true;
   }
-  return false;
-}
+};
